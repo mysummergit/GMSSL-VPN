@@ -2684,6 +2684,7 @@ tls_process(struct tls_multi *multi,
             struct link_socket_info *to_link_socket_info,
             interval_t *wakeup)
 {
+	//////////tls握手主要代码
     struct gc_arena gc = gc_new();
     struct buffer *buf;
     bool state_change = false;
@@ -2697,6 +2698,7 @@ tls_process(struct tls_multi *multi,
     ASSERT(session_id_defined(&session->session_id));
 
     /* Should we trigger a soft reset? -- new key, keeps old key for a while */
+	/////////////第6666666666666666666666步
     if (ks->state >= S_ACTIVE
         && ((session->opt->renegotiate_seconds
              && now >= ks->established + session->opt->renegotiate_seconds)
@@ -2743,7 +2745,7 @@ tls_process(struct tls_multi *multi,
          */
 
         /* Initial handshake */
-        if (ks->state == S_INITIAL)
+        if (ks->state == S_INITIAL)////////握手开始initial初始化111111111111111111
         {
             buf = reliable_get_buf_output_sequenced(ks->send_reliable);
             if (buf)
@@ -2755,7 +2757,7 @@ tls_process(struct tls_multi *multi,
                 reliable_mark_active_outgoing(ks->send_reliable, buf, ks->initial_opcode);
                 INCR_GENERATED;
 
-                ks->state = S_PRE_START;
+                ks->state = S_PRE_START;////第222222222222222222222222步
                 state_change = true;
                 dmsg(D_TLS_DEBUG, "TLS: Initial Handshake, sid=%s",
                      session_id_print(&session->session_id, &gc));
@@ -2778,6 +2780,7 @@ tls_process(struct tls_multi *multi,
         /* Are we timed out on receive? */
         if (now >= ks->must_negotiate)
         {
+        	//////第66666666666666666666步
             if (ks->state < S_ACTIVE)
             {
                 msg(D_TLS_ERRORS,
@@ -2788,15 +2791,15 @@ tls_process(struct tls_multi *multi,
             else /* assume that ks->state == S_ACTIVE */
             {
                 dmsg(D_TLS_DEBUG_MED, "STATE S_NORMAL_OP");
-                ks->state = S_NORMAL_OP;
+                ks->state = S_NORMAL_OP;///////第777777777777777步
                 ks->must_negotiate = 0;
             }
         }
 
         /* Wait for Initial Handshake ACK */
-        if (ks->state == S_PRE_START && FULL_SYNC)
+        if (ks->state == S_PRE_START && FULL_SYNC)////第2222222222222222222222步
         {
-            ks->state = S_START;
+            ks->state = S_START;////////第3333333333333333333333333步
             state_change = true;
 
             /*
@@ -2814,6 +2817,8 @@ tls_process(struct tls_multi *multi,
         }
 
         /* Wait for ACK */
+		///////////第555555555555555555555步 get_key
+		///////////第444444444444444444444步 sent_key
         if (((ks->state == S_GOT_KEY && !session->opt->server)
              || (ks->state == S_SENT_KEY && session->opt->server)))
         {
@@ -2826,7 +2831,7 @@ tls_process(struct tls_multi *multi,
                     print_details(&ks->ks_ssl, "Control Channel:");
                 }
                 state_change = true;
-                ks->state = S_ACTIVE;
+                ks->state = S_ACTIVE;///////第66666666666666666666666步
                 INCR_SUCCESS;
 
                 /* Set outgoing address for data channel packets */
@@ -2891,7 +2896,7 @@ tls_process(struct tls_multi *multi,
 
         /* Read incoming plaintext from TLS object */
         buf = &ks->plaintext_read_buf;
-        if (!buf->len)
+        if (!buf->len)//////buf->len=0时进入if
         {
             int status;
 
@@ -2911,6 +2916,8 @@ tls_process(struct tls_multi *multi,
         }
 
         /* Send Key */
+		//start状态是第33333333333333333333333333333333步
+		//get_key是第5555555555555555555555555555555步
         buf = &ks->plaintext_write_buf;
         if (!buf->len && ((ks->state == S_START && !session->opt->server)
                           || (ks->state == S_GOT_KEY && session->opt->server)))
@@ -2936,11 +2943,13 @@ tls_process(struct tls_multi *multi,
 
             state_change = true;
             dmsg(D_TLS_DEBUG_MED, "STATE S_SENT_KEY");
-            ks->state = S_SENT_KEY;
+            ks->state = S_SENT_KEY;//////第4444444444444444444444步
         }
 
         /* Receive Key */
         buf = &ks->plaintext_read_buf;
+		///////////第44444444444步 sent_key
+		///////////第333333333333333333333步 start
         if (buf->len
             && ((ks->state == S_SENT_KEY && !session->opt->server)
                 || (ks->state == S_START && session->opt->server)))
@@ -2966,7 +2975,7 @@ tls_process(struct tls_multi *multi,
 
             state_change = true;
             dmsg(D_TLS_DEBUG_MED, "STATE S_GOT_KEY");
-            ks->state = S_GOT_KEY;
+            ks->state = S_GOT_KEY;////第5555555555555555555555555555步
         }
 
         /* Write outgoing plaintext to TLS object */
@@ -2988,7 +2997,7 @@ tls_process(struct tls_multi *multi,
         }
 
         /* Outgoing Ciphertext to reliable buffer */
-        if (ks->state >= S_START)
+        if (ks->state >= S_START)/////第3333333333333333333333步
         {
             buf = reliable_get_buf_output_sequenced(ks->send_reliable);
             if (buf)
@@ -3028,7 +3037,7 @@ tls_process(struct tls_multi *multi,
 
     /* When should we wake up again? */
     {
-        if (ks->state >= S_INITIAL)
+        if (ks->state >= S_INITIAL)/////第11111111111111111111111111步
         {
             compute_earliest_wakeup(wakeup,
                                     reliable_send_timeout(ks->send_reliable));
