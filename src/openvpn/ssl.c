@@ -2943,12 +2943,12 @@ tls_process(struct tls_multi *multi,
 
             state_change = true;
             dmsg(D_TLS_DEBUG_MED, "STATE S_SENT_KEY");
-            ks->state = S_SENT_KEY;//////第4444444444444444444444步
+            ks->state = S_SENT_KEY;//////第44444444444444444444444步
         }
 
         /* Receive Key */
         buf = &ks->plaintext_read_buf;
-		///////////第44444444444步 sent_key
+		///////////第4444444444444444步 sent_key
 		///////////第333333333333333333333步 start
         if (buf->len
             && ((ks->state == S_SENT_KEY && !session->opt->server)
