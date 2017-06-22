@@ -184,7 +184,7 @@ openvpn_main(int argc, char *argv[])
 #endif
 
             /* initialize options to default state */
-            init_options(&c.options, true);
+            init_options(&c.options, true);//用于初始化server.conf文件，对自定义的配置进行一个初始化
 
             /* parse command line options, and read configuration file */
             parse_argv(&c.options, argc, argv, M_USAGE, OPT_P_DEFAULT, NULL, c.es);
@@ -237,7 +237,7 @@ openvpn_main(int argc, char *argv[])
             pre_setup(&c.options);
 
             /* test crypto? */
-            if (do_test_crypto(&c.options))
+            if (do_test_crypto(&c.options))//测试加密是否可用
             {
                 break;
             }
@@ -286,7 +286,7 @@ openvpn_main(int argc, char *argv[])
 
 #if P2MP_SERVER
                     case MODE_SERVER:
-                        tunnel_server(&c);
+                        tunnel_server(&c);//从此处进行进一步的调用
                         break;
 
 #endif
