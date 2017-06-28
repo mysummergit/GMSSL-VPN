@@ -723,6 +723,7 @@ tls_ctx_load_cert_file_and_copy(struct tls_root_ctx *ctx,
                                 const char *cert_file, const char *cert_file_inline, X509 **x509
                                 )
 {
+	printf("this is openvpn tls_ctx_load_cert_file_and_copy use to load cert\n");
     BIO *in = NULL;
     X509 *x = NULL;
     int ret = 0;
@@ -810,6 +811,7 @@ tls_ctx_load_priv_file(struct tls_root_ctx *ctx, const char *priv_key_file,
                        const char *priv_key_file_inline
                        )
 {
+	printf("this is tls_ctx_load_priv_file use to load key\n");
     SSL_CTX *ssl_ctx = NULL;
     BIO *in = NULL;
     EVP_PKEY *pkey = NULL;
