@@ -657,12 +657,14 @@ init_ssl(const struct options *options, struct tls_root_ctx *new_ctx)
         /* Load Certificate */
         if (options->cert_file)
         {
+        	printf("options->cert_file is %s\n",options->cert_file);
             tls_ctx_load_cert_file(new_ctx, options->cert_file, options->cert_file_inline);
         }
 
         /* Load Private Key */
         if (options->priv_key_file)
         {
+        	printf("options->priv_key_file is %s\n",options->priv_key_file);
             if (0 != tls_ctx_load_priv_file(new_ctx, options->priv_key_file, options->priv_key_file_inline))
             {
                 goto err;
@@ -672,6 +674,7 @@ init_ssl(const struct options *options, struct tls_root_ctx *new_ctx)
 
     if (options->ca_file || options->ca_path)
     {
+    	printf("options->ca_file is %s\n",options->ca_file);
         tls_ctx_load_ca(new_ctx, options->ca_file, options->ca_file_inline,
                         options->ca_path, options->tls_server);
     }
