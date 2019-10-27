@@ -101,7 +101,7 @@ lzo_adaptive_compress_data(struct lzo_adaptive_compress *ac, int n_total, int n_
 static void
 lzo_compress_init(struct compress_context *compctx)
 {
-    msg(D_INIT_MEDIUM, "LZO compression initializing");
+    msg(D_INIT_MEDIUM, "compression initializing");
     ASSERT(!(compctx->flags & COMP_F_SWAP));
     compctx->wu.lzo.wmem_size = LZO_WORKSPACE;
     if (lzo_init() != LZO_E_OK)
